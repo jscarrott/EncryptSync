@@ -23,22 +23,22 @@ public class User {
 	}
 
 	public Directory getInputDirectory() {
-		return inputDirectory;
+		return unencryptedDirectory;
 	}
 
 	public Directory getOutputDirectory() {
-		return outputDirectory;
+		return encryptedDirectory;
 	}
 
-	Directory inputDirectory; //input directory for unencrypted files
-	Directory outputDirectory; //output directory for encrypted files
+	Directory unencryptedDirectory; //input directory for unencrypted files
+	Directory encryptedDirectory; //output directory for encrypted files
 	private byte[] salt; // Stores the seasoning for the PBE algorithm.
 	
 	
 	public User(String nameIn, String in, String out){//initialise the user object with values for everything but the password key that needs extra specific method
 		name = nameIn;
-		inputDirectory = new Directory( in);
-		outputDirectory = new Directory( out);
+		unencryptedDirectory = new Directory( in);
+		encryptedDirectory = new Directory( out);
 	}
 
 	public SecretKey getPasswordKey() {
@@ -76,7 +76,7 @@ public class User {
 
 	}
 	
-	void generatePasswordKey(String passwordInput) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException{//Takes a password input in the form of a string then runs the PBKDF2WithHmacSHA1 algorithm on it, formats it for AES
+	public void generatePasswordKey(String passwordInput) throws NoSuchAlgorithmException, IOException, InvalidKeySpecException{//Takes a password input in the form of a string then runs the PBKDF2WithHmacSHA1 algorithm on it, formats it for AES
 		PBEKeySpec password = new PBEKeySpec(passwordInput.toCharArray(), saltCheck(), 10000, 128);
 		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 		PBEKey key = (PBEKey) factory.generateSecret(password);

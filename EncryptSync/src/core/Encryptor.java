@@ -3,7 +3,6 @@ package core;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,9 +36,10 @@ public class Encryptor {
 			ivout.write(iv);
 			ivout.close();
 		}
-		for(int counter = 0; counter < user.inputDirectory.containedFiles.size(); counter++){
-		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.inputDirectory.containedFiles.get(counter)));
-		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.outputDirectory.location + user.inputDirectory.containedFiles.get(counter).getName() + ""), cipher);
+		for(int counter = 0; counter < user.unencryptedDirectory.containedFiles.size(); counter++){
+		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.unencryptedDirectory.containedFiles.get(counter)));
+		System.out.println(user.encryptedDirectory.location.toAbsolutePath() + user.unencryptedDirectory.containedFiles.get(counter).getName() + "");
+		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.encryptedDirectory.location +  "\\"+ user.unencryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
 		copy(is,os);
 		is.close();
 		os.close();

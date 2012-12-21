@@ -17,8 +17,8 @@ public class userTest {
 	public void test() {
 		User testUser = new User("John", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync");
 		assertEquals("John", testUser.getName());
-		assertEquals( "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync", testUser.getInputDirectory().getLocation().toString());
-		assertEquals( "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync", testUser.getOutputDirectory().getLocation().toString());	
+		assertEquals( "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync", testUser.getUnencryptedDirectory().getLocation().toString());
+		assertEquals( "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync", testUser.getEncryptedDirectory().getLocation().toString());	
 		
 	
 	}

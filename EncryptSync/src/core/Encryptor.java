@@ -38,8 +38,7 @@ public class Encryptor {
 		}
 		for(int counter = 0; counter < user.unencryptedDirectory.containedFiles.size(); counter++){
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.unencryptedDirectory.containedFiles.get(counter)));
-		System.out.println(user.encryptedDirectory.location.toAbsolutePath() + user.unencryptedDirectory.containedFiles.get(counter).getName() + "");
-		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.encryptedDirectory.location +  "\\"+ user.unencryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
+		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.encryptedDirectory.location.toAbsolutePath() +  "\\"+ user.unencryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
 		copy(is,os);
 		is.close();
 		os.close();

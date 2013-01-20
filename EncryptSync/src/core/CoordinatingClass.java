@@ -58,7 +58,8 @@ public class CoordinatingClass {
 			}
 			
 		}
-		verifyKey(newUser, passwordInput);
+		verifyKey(newUser, passwordInput);kcd
+		
 		users.add(newUser);
 		return newUser;
 	}

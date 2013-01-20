@@ -147,4 +147,12 @@ public class User {
 		passwordKey = new SecretKeySpec(key.getEncoded(), "AES");
 
 	}
+
+	public boolean isKeyVerified() {
+		return keyVerified;
+	}
+
+	public void setKeyVerified(boolean keyVerified) {
+		this.keyVerified = keyVerified;
+	}
 }

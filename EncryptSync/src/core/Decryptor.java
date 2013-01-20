@@ -58,7 +58,7 @@ public class Decryptor {
 		if (!exists){
 			System.out.println("Cypher config file not found!");
 		}
-		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile));
+		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile + ".out"));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(new File("tempfile.txt")), cipher);
 		copy(is,os);
 		is.close();

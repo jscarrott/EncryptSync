@@ -2,6 +2,7 @@ package core;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -212,14 +213,15 @@ public class CoordinatingClass {
 		user.generatePasswordKey(passwordInput);
 		decryptor.decryptChkFile(user);
 		File chkFile  = new File("tempfile.txt");
-		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile));
-		Scanner inputUsers = new Scanner(is);
-		String checkinValue = inputUsers.nextLine();
-		if(inputUsers.nextLine().equals("abcdefghijklmnopqrstuvwxyz123")){
+		//DataInputStream is = new DataInputStream(new FileInputStream(chkFile));
+		Scanner inputUsers = new Scanner(chkFile);
+		if(inputUsers.next().equals("abcdefghijklmnop")){
 			inputUsers.close();
+			user.setKeyVerified(true);
 			return true;
 		}
 		inputUsers.close();
+		user.setKeyVerified(false);
 		return false;
 		
 	}

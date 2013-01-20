@@ -109,6 +109,11 @@ public class Encryptor {
 				ENCODING);
 		ow.write(inputFile);
 		ow.close();
+		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.referenceFile));
+		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.referenceFile+".out"), cipher);
+		copy(is, os);
+		is.close();
+		os.close();
 
 		// TODO insert code to create then encrypt a simple phrase e.g. 1234567
 	}

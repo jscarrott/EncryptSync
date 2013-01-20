@@ -39,6 +39,8 @@ public class CoordinatingClass {
 	public CoordinatingClass() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		userListFile = new File("users.conf");//option to change this via the UI
 		users = new ArrayList<>();
+		encryptor = new Encryptor();
+		decryptor = new Decryptor();
 		if(userListFile.exists()){
 			readInUserList(userListFile);
 		}
@@ -141,8 +143,15 @@ public class CoordinatingClass {
 		}
 		ow.close();
 	}
-	public void removeUser(User user){
-		users.remove(user);
+	public void removeUser(String userName){
+		int counter = 0, index = 0;
+		for(User user : users){
+			
+			if(userName.equals(user.getName())){
+			 index = counter;
+			}
+			counter++;
+		}
 	}
 	
 	public void createKey(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException{
@@ -202,10 +211,11 @@ public class CoordinatingClass {
 	public boolean verifyKey(User user, String passwordInput) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException{
 		user.generatePasswordKey(passwordInput);
 		decryptor.decryptChkFile(user);
-		File chkFile  = new File("tempfile");
+		File chkFile  = new File("tempfile.txt");
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile));
 		Scanner inputUsers = new Scanner(is);
-		if(inputUsers.next().equals("abcdefghijklmnopqrstuvwxyz123")){
+		String checkinValue = inputUsers.nextLine();
+		if(inputUsers.nextLine().equals("abcdefghijklmnopqrstuvwxyz123")){
 			inputUsers.close();
 			return true;
 		}

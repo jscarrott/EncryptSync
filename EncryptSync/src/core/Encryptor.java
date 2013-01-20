@@ -105,7 +105,7 @@ public class Encryptor {
 															// to the wrong
 															// directory, write
 															// test to check
-		BufferedWriter ow = Files.newBufferedWriter(usersFile.toPath(),
+		BufferedWriter ow = Files.newBufferedWriter(usersFile.toPath(),//output stream is all wrong should be using cpher output stream/
 				ENCODING);
 		ow.write(inputFile);
 		ow.close();

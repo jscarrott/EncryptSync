@@ -43,10 +43,18 @@ public class CoordTest {
 
 	/**
 	 * Test method for {@link core.CoordinatingClass#addNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@Test
-	public void testAddNewUserStringStringStringString() {
-		fail("Not yet implemented");
+	public void testAddNewUserStringStringStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+		CoordinatingClass testCoordClass = new CoordinatingClass();
+		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut", "bob1234");
+	assertEquals( "BobHarold", testCoordClass.getUsers().get(0).getName());
 	}
 
 	/**
@@ -83,15 +91,23 @@ public class CoordTest {
 		testCoordClass.addNewUser("BobHarold2", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.addNewUser("BobHarold3", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.saveUserListToFile();
-		assertEquals("bobharold", testCoordClass.getUsers().get(0).getName());
+		assertEquals("BobHarold", testCoordClass.getUsers().get(0).getName());
 	}
 
 	/**
 	 * Test method for {@link core.CoordinatingClass#removeUser(core.User)}.
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@Test
-	public void testRemoveUser() {
-		fail("Not yet implemented");
+	public void testRemoveUser() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+		CoordinatingClass testCoordClass = new CoordinatingClass();
+		testCoordClass.removeUser("BobHarold");
+		
 	}
 
 	/**

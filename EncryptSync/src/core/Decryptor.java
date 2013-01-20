@@ -46,7 +46,7 @@ public class Decryptor {
 	 * @param user the user that contains the necessary directory objects
 	 */
 	public void decryptChkFile(User user) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException, InvalidAlgorithmParameterException{
-		File chkFile = new File(user.name + ".chkfile");
+		File chkFile = user.referenceFile;
 		File ivread = new File(user.name + ".iv");
 		Cipher cipher = generateCipher();
 		FileInputStream in = new FileInputStream(ivread);
@@ -59,7 +59,7 @@ public class Decryptor {
 			System.out.println("Cypher config file not found!");
 		}
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile));
-		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(new File("tempfile")), cipher);
+		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(new File("tempfile.txt")), cipher);
 		copy(is,os);
 		is.close();
 		os.close();

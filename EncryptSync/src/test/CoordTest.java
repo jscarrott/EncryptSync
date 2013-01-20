@@ -83,7 +83,7 @@ public class CoordTest {
 		testCoordClass.addNewUser("BobHarold2", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.addNewUser("BobHarold3", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.saveUserListToFile();
-		fail("Not yet implemented");
+		assertEquals("bobharold", testCoordClass.getUsers().get(0).getName());
 	}
 
 	/**

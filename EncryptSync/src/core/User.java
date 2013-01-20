@@ -72,6 +72,14 @@ public class User {
 				+ "\\reference." + name);
 	}
 
+	public File getReferenceFile() {
+		return referenceFile;
+	}
+
+	public void setReferenceFile(File referenceFile) {
+		this.referenceFile = referenceFile;
+	}
+
 	public SecretKey getPasswordKey() {
 		return passwordKey;
 	}

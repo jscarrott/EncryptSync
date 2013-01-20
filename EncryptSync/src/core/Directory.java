@@ -16,7 +16,12 @@ public class Directory {
 	
 	public Directory(String path){
 		FileSystem fs = FileSystems.getDefault();
-		location = fs.getPath(path);//Uses the string input to generate a correct path using the filesystem class
+		try {
+			location = fs.getPath(path);//Uses the string input to generate a correct path using the filesystem class
+		} catch (Exception e) {
+			System.out.println("Invalid path entered, user should not be created");
+		}
+		
 		pollDirectory(); //generates the initial list of files in the directory.
 		
 	}

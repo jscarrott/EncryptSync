@@ -48,7 +48,20 @@ public class CoordinatingClass {
 		List<User> cUsers = new ArrayList<User>(users);
 		return cUsers;
 	}
-	
+	/**Checks if user name already exists, then checks if user has already created a reference file and if not creates one with the new password
+	 * 
+	 * @param name
+	 * @param in
+	 * @param out
+	 * @param passwordInput
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IOException
+	 */
 	public User addNewUser(String name, String in, String out, String passwordInput) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
 		User newUser = new User(name, in , out);
 		for(User user : users){
@@ -58,8 +71,22 @@ public class CoordinatingClass {
 			}
 			
 		}
-		verifyKey(newUser, passwordInput);kcd
+		if(newUser.referenceFile.exists()){
+			verifyKey(newUser, passwordInput);//Should this be implemented in the UI? Hmm easy enough to remove later.
+		if(newUser.keyVerified == true){
+			System.out.println("Succesfull login, password correct");
+		}
+		else {
+			System.out.println("Unsuccesfull login password incorrect.");
+		}
 		
+		}
+		else {
+			
+			createKey(newUser, passwordInput);
+			verifyKey(newUser, passwordInput);
+			
+		}
 		users.add(newUser);
 		return newUser;
 	}
@@ -91,7 +118,7 @@ public class CoordinatingClass {
 			try {
 				addNewUser(inputUsers.next().replaceAll("\\r\\n", "") , inputUsers.next() , inputUsers.next() );
 			} catch (Exception e) {
-				// TODO: handle exception
+				// TODO: handle exception An exception  caused by the scanner trying to read nothing is thrown, unsure how to deal with it.
 			}
 			
 			
@@ -122,6 +149,7 @@ public class CoordinatingClass {
 		user.generatePasswordKey(password);
 		encryptor.encryptChkFile(user, "abcdefghijklmnopqrstuvwxyz123");
 	}
+	
 	public boolean loginUser(String userName, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
 	for(User user : users){
 		if(user.name.equals(userName)){

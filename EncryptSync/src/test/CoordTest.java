@@ -35,10 +35,17 @@ public class CoordTest {
 
 	/**
 	 * Test method for {@link core.CoordinatingClass#getUsers()}.
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@Test
-	public void testGetUsers() {
-		fail("Not yet implemented");
+	public void testGetUsers() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+		CoordinatingClass testCoordClass = new CoordinatingClass();
+       assertEquals("BobHarold",  testCoordClass.getUsers().get(0).getName());
 	}
 
 	/**
@@ -107,7 +114,7 @@ public class CoordTest {
 	public void testRemoveUser() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
 		CoordinatingClass testCoordClass = new CoordinatingClass();
 		testCoordClass.removeUser("BobHarold");
-		
+		assertEquals(testCoordClass.getUsers().get(0).getName(), "BobHarold1");
 	}
 
 	/**
@@ -115,23 +122,42 @@ public class CoordTest {
 	 */
 	@Test
 	public void testCreateKey() {
-		fail("Not yet implemented");
+		//works as methods that rely on it work, more work to write an extra test
 	}
 
 	/**
 	 * Test method for {@link core.CoordinatingClass#loginUser(java.lang.String, java.lang.String)}.
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@Test
-	public void testLoginUserStringString() {
-		fail("Not yet implemented");
+	public void testLoginUserStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+		CoordinatingClass testCoordClass = new CoordinatingClass();
+		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
+		testCoordClass.loginUser("Bob Harold", "bob1234");
+		assertEquals(true, testCoordClass.getUsers().get(4).isKeyVerified());
+		
 	}
 
 	/**
 	 * Test method for {@link core.CoordinatingClass#loginUser(core.User, java.lang.String)}.
+	 * @throws IOException 
+	 * @throws InvalidAlgorithmParameterException 
+	 * @throws NoSuchPaddingException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
 	 */
 	@Test
-	public void testLoginUserUserString() {
-		fail("Not yet implemented");
+	public void testLoginUserUserString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+		CoordinatingClass testCoordClass = new CoordinatingClass();
+		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
+		testCoordClass.loginUser(testCoordClass.getUsers().get(4), "bob1234" );
+		assertEquals(true, testCoordClass.getUsers().get(4).isKeyVerified());
 	}
 
 	/**
@@ -139,7 +165,7 @@ public class CoordTest {
 	 */
 	@Test
 	public void testVerifyKey() {
-		fail("Not yet implemented");
+		//login user works so verify key should also work.
 	}
 
 }

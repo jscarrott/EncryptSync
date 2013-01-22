@@ -2,7 +2,6 @@ package core;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-
 import javax.crypto.NoSuchPaddingException;
 
 public class CoordinatingClass {
@@ -39,7 +36,7 @@ public class CoordinatingClass {
 	 */
 	public CoordinatingClass() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
 		userListFile = new File("users.conf");//option to change this via the UI
-		users = new ArrayList<>();
+		users = new ArrayList<User>();
 		encryptor = new Encryptor();
 		decryptor = new Decryptor();
 		if(userListFile.exists()){
@@ -153,6 +150,7 @@ public class CoordinatingClass {
 			}
 			counter++;
 		}
+		users.remove(((ArrayList<User>) users).get(index));
 	}
 	
 	public void createKey(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException{

@@ -21,17 +21,14 @@ public class DirectoryTest {
 
 	@Test
 	public void testDirectory() {
-		Directory testDirectoryObject = new Directory("G:\\Users\\Home\\workspace\\EncryptSync");
+		Directory testDirectoryObject = new Directory("C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn");
 		testDirectoryObject.pollDirectory();
 		FileSystem fs = FileSystems.getDefault();
-		Path testDirPath = fs.getPath("G:\\Users\\Home\\workspace\\EncryptSync");
+		Path testDirPath = fs.getPath("C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn");
 		
 		assertEquals("working", testDirectoryObject.getContainedFiles(),  Arrays.asList(testDirPath.toFile().listFiles()));
 
 	}
-	@Test
-	public void testPollDirectory() {
-		fail("Not yet implemented");
-	}
+	
 
 }

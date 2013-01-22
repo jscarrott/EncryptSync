@@ -90,7 +90,19 @@ public class CoordinatingClass {
 		users.add(newUser);
 		return newUser;
 	}
-	
+	/**adds new user but without logging the user in
+	 * 
+	 * @param name
+	 * @param in
+	 * @param out
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IOException
+	 */
 	public User addNewUser(String name, String in, String out)
 			throws InvalidKeyException, NoSuchAlgorithmException,
 			InvalidKeySpecException, NoSuchPaddingException,
@@ -158,6 +170,18 @@ public class CoordinatingClass {
 		encryptor.encryptChkFile(user, "abcdefghijklmnopqrstuvwxyz123");
 	}
 	
+	/**verifies the inputted key for a user given the user name
+	 * 
+	 * @param userName
+	 * @param passwordString
+	 * @return
+	 * @throws InvalidKeyException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws IOException
+	 */
 	public boolean loginUser(String userName, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
 	for(User user : users){
 		if(user.name.equals(userName)){
@@ -168,7 +192,7 @@ public class CoordinatingClass {
 	System.out.println("No such User. Please try again.");
     return false;
 	}
-	/**verifies the inputted key for a user
+	/**verifies the inputted key for a user object
 	 * 
 	 * @param user
 	 * @param passwordString

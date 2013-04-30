@@ -72,8 +72,8 @@ public class CoordinatingClass {
 			
 		}
 		if(newUser.referenceFile.exists()){
-			verifyKey(newUser, passwordInput);//Should this be implemented in the UI? Hmm easy enough to remove later.
-		if(newUser.keyVerified == true){
+			verifyKey(newUser, passwordInput); //Should this be implemented in the UI? Hmm easy enough to remove later.
+		if(newUser.keyVerified){
 			System.out.println("Succesfull login, password correct");
 		}
 		else {
@@ -235,9 +235,8 @@ public class CoordinatingClass {
 		user.generatePasswordKey(passwordInput);
 		decryptor.decryptChkFile(user);
 		File chkFile  = new File("tempfile.txt");
-		//DataInputStream is = new DataInputStream(new FileInputStream(chkFile));
 		Scanner inputUsers = new Scanner(chkFile);
-		if(inputUsers.next().equals("abcdefghijklmnop")){
+		if(inputUsers.next().equals("abcdefghijklmnopqrstuvwxyz123")){
 			inputUsers.close();
 			user.setKeyVerified(true);
 			return true;
@@ -246,6 +245,19 @@ public class CoordinatingClass {
 		user.setKeyVerified(false);
 		return false;
 		
+	}
+	
+	public void encryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
+		getEncryptor().encryptFile(userProfile);
+	}
+	
+	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
+		getDecryptor().decryptFile(userProfile);
+	}
+	public void updateFilesInDirectories(User user){
+		
+		user.getEncryptedDirectory().pollDirectory();
+		user.getUnencryptedDirectory().pollDirectory();
 	}
 	
 }

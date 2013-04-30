@@ -156,6 +156,7 @@ public class CoordTest {
 	public void testLoginUserUserString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
 		CoordinatingClass testCoordClass = new CoordinatingClass();
 		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
+		testCoordClass.createKey(testCoordClass.getUsers().get(4), "bob1234");
 		testCoordClass.loginUser(testCoordClass.getUsers().get(4), "bob1234" );
 		assertEquals(true, testCoordClass.getUsers().get(4).isKeyVerified());
 	}

@@ -51,6 +51,14 @@ public class User {
 	public Directory getEncryptedDirectory() {
 		return encryptedDirectory;
 	}
+	
+	public String getUnencryptedDirectoryString() {
+		return unencryptedDirectory.getLocation().toString();
+	}
+
+	public String getEncryptedDirectoryString() {
+		return encryptedDirectory.getLocation().toString();
+	}
 
 	Directory unencryptedDirectory; // input directory for unencrypted files
 	Directory encryptedDirectory; // output directory for encrypted files
@@ -99,9 +107,8 @@ public class User {
 
 	public byte[] saltCheck() throws NoSuchAlgorithmException, IOException {
 		File saltCheck = new File(name + ".salt");
-		boolean exists = saltCheck.exists();
 
-		if (exists) {
+		if (saltCheck.exists()) {
 			FileInputStream in = new FileInputStream(saltCheck);
 			byte[] salty = new byte[(int) saltCheck.length()];
 			in.read(salty);
@@ -155,4 +162,9 @@ public class User {
 	public void setKeyVerified(boolean keyVerified) {
 		this.keyVerified = keyVerified;
 	}
+
+        public String toString()
+    {
+        return name;
+    }
 }

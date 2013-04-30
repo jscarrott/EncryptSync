@@ -32,9 +32,8 @@ public class Encryptor {
 		
 		File ivread = new File(user.name + ".iv");
 		
-		boolean exists = ivread.exists();
 		Cipher cipher = generateCipher();
-		if (exists) {
+		if (ivread.exists()) {
 			FileInputStream in = new FileInputStream(ivread);
 			byte[] iv = new byte[(int) ivread.length()];
 			in.read(iv);

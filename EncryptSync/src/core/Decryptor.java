@@ -23,6 +23,8 @@ public class Decryptor {
 	 * the encrypted directory and
 	 * looks for preexisting initialisation
 	 * */
+	
+	//TODO: avoid trying to encrypt directories
 	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
 		File ivread = new File(user.name + ".iv");
 		Cipher cipher = generateCipher();

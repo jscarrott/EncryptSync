@@ -26,6 +26,8 @@ public class Encryptor {
 	 * the encrypted directory and
 	 * looks for preexisting initialisation vector else creates one 
 	 * @param user 	the user that contains the necessary directory objects */
+	
+	//TODO: avoid trying to encrypt directories
 	public void encryptFile(User user) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, IOException {

@@ -120,7 +120,16 @@ public class CoordinatingClass {
 		users.add(newUser);
 		return newUser;
 	}
-	
+	/** Reads in the text file that contains a CSV list of all known users
+	 * 
+	 * @param usersFileLocation Where the config file is stored
+	 * @throws IOException
+	 * @throws InvalidKeyException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidAlgorithmParameterException
+	 */
 	private void readInUserList(File usersFileLocation) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException{
 		File usersFile  = usersFileLocation;//use correct directory
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(usersFile));
@@ -138,7 +147,10 @@ public class CoordinatingClass {
 		is.close();
 		inputUsers.close();
 	}
-	
+	/** Saves the users to file in a CSV format
+	 * 
+	 * @throws IOException
+	 */
 	public void saveUserListToFile() throws IOException{
 		final Charset ENCODING = StandardCharsets.UTF_8;
 		File usersFile  = userListFile;
@@ -153,6 +165,12 @@ public class CoordinatingClass {
 		}
 		ow.close();
 	}
+	
+	/** removes user from users collection. -  
+	 * 
+	 * @param userName
+	 */
+	//TODO: call save to file in order to remove user permanently?  
 	public void removeUser(String userName){
 		int counter = 0, index = 0;
 		for(User user : users){
@@ -164,7 +182,17 @@ public class CoordinatingClass {
 		}
 		users.remove(((ArrayList<User>) users).get(index));
 	}
-	
+	/** generates a password key and assigns it to the user then generates a reference file so the password can be checked later
+	 * 
+	 * @param user user to have key generated
+	 * @param password ditto
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws IOException
+	 * @throws InvalidKeyException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws NoSuchPaddingException
+	 */
 	public void createKey(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException{
 		user.generatePasswordKey(password);
 		encryptor.encryptChkFile(user, "abcdefghijklmnopqrstuvwxyz123");
@@ -254,6 +282,11 @@ public class CoordinatingClass {
 	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
 		getDecryptor().decryptFile(userProfile);
 	}
+	
+	/** runs the directory method pollDirectory()
+	 * 
+	 * @param user
+	 */
 	public void updateFilesInDirectories(User user){
 		
 		user.getEncryptedDirectory().pollDirectory();

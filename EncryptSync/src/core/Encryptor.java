@@ -51,20 +51,24 @@ public class Encryptor {
 		}
 		for (int counter = 0; counter < user.unencryptedDirectory.containedFiles
 				.size(); counter++) {// Iterates through directory
-			BufferedInputStream is = new BufferedInputStream(
-					new FileInputStream(
-							user.unencryptedDirectory.containedFiles
-									.get(counter)));
-			CipherOutputStream os = new CipherOutputStream(
-					new FileOutputStream(
-							user.encryptedDirectory.location.toAbsolutePath()
-									+ "\\"
-									+ user.unencryptedDirectory.containedFiles
-											.get(counter).getName() + ""),
-					cipher);
-			copy(is, os);
-			is.close();
-			os.close();
+			if(!user.unencryptedDirectory.containedFiles
+									.get(counter).isDirectory()){
+				BufferedInputStream is = new BufferedInputStream(
+						new FileInputStream(
+								user.unencryptedDirectory.containedFiles
+										.get(counter)));
+				CipherOutputStream os = new CipherOutputStream(
+						new FileOutputStream(
+								user.encryptedDirectory.location.toAbsolutePath()
+										+ "\\"
+										+ user.unencryptedDirectory.containedFiles
+												.get(counter).getName() + ""),
+						cipher);
+				copy(is, os);
+				is.close();
+				os.close();
+									}
+			
 		}
 
 	}

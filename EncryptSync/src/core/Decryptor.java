@@ -33,13 +33,20 @@ public class Decryptor {
 		in.read(iv);
 		in.close();
 		cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
-		for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
-		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.encryptedDirectory.containedFiles.get(counter)));
-		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.encryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
-		copy(is,os);
-		is.close();
-		os.close();
+		if(!(user.encryptedDirectory.containedFiles.size() == 0)){
+			for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
+				if(!user.encryptedDirectory.containedFiles
+						.get(counter).isDirectory()){
+					BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.encryptedDirectory.containedFiles.get(counter)));
+					CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.encryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
+					copy(is,os);
+					is.close();
+					os.close();
+				}
+			
+			}
 		}
+		
 		
 	}
 	/** Method used to decrypt the string file with the iv and accepted password key
@@ -48,7 +55,7 @@ public class Decryptor {
 	 */
 	public void decryptChkFile(User user) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException, InvalidAlgorithmParameterException{
 		File chkFile = user.referenceFile;
-		File ivread = new File(user.name + ".iv");
+		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		Cipher cipher = generateCipher();
 		FileInputStream in = new FileInputStream(ivread);
 		byte[] iv = new byte[(int) ivread.length()];

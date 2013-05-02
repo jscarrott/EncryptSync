@@ -50,7 +50,7 @@ public class Encryptor {
 			ivout.close();
 		}
 		for (int counter = 0; counter < user.unencryptedDirectory.containedFiles
-				.size(); counter++) {// Iterates through directory
+				.size(); counter++) {// Iterates through directory and ignores a file if it is a directory
 			if(!user.unencryptedDirectory.containedFiles
 									.get(counter).isDirectory()){
 				BufferedInputStream is = new BufferedInputStream(
@@ -100,7 +100,7 @@ public class Encryptor {
 		} else {
 			cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
 			byte[] iv = cipher.getIV();
-			FileOutputStream ivout = new FileOutputStream(user.name + ".iv");
+			FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.name + ".iv");
 			ivout.write(iv);
 			ivout.close();
 		}

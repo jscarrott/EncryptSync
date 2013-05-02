@@ -41,6 +41,15 @@ public class User {
 					// multiple accounts
 	boolean keyVerified;//
 	File referenceFile;// file location for the test file used to verify the key
+	File configDirectory;
+
+	public File getConfigDirectory() {
+		return configDirectory;
+	}
+
+	public void setConfigDirectory(File configDirectory) {
+		this.configDirectory = configDirectory;
+	}
 
 	public String getName() {
 		return name;
@@ -75,8 +84,9 @@ public class User {
 		name = nameIn;
 		unencryptedDirectory = new Directory(in);
 		encryptedDirectory = new Directory(out);
-		if(new File(encryptedDirectory.getLocation() + "\\.config").exists()){
-			referenceFile = new File(encryptedDirectory.getLocation() +  "\\.config" + "\\reference." + name);
+		configDirectory = new File(encryptedDirectory.getLocation() + "\\.config");
+		if(configDirectory.exists()){
+			referenceFile = new File(configDirectory + "\\reference." + name);
 		}
 		else{
 			new File(encryptedDirectory.getLocation() + "\\.config").mkdir();

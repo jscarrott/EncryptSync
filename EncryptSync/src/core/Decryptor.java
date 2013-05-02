@@ -26,7 +26,7 @@ public class Decryptor {
 	
 	//TODO: avoid trying to encrypt directories
 	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
-		File ivread = new File(user.name + ".iv");
+		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		Cipher cipher = generateCipher();
 		FileInputStream in = new FileInputStream(ivread);
 		byte[] iv = new byte[(int) ivread.length()];

@@ -32,7 +32,7 @@ public class Encryptor {
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, IOException {
 		
-		File ivread = new File(user.name + ".iv");
+		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
 		Cipher cipher = generateCipher();
 		if (ivread.exists()) {
@@ -45,7 +45,7 @@ public class Encryptor {
 		} else {
 			cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
 			byte[] iv = cipher.getIV();
-			FileOutputStream ivout = new FileOutputStream(user.name + ".iv");
+			FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.name + ".iv");
 			ivout.write(iv);
 			ivout.close();
 		}

@@ -33,7 +33,7 @@ public class Decryptor {
 		in.read(iv);
 		in.close();
 		cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
-		for(int counter = 0; counter < user.unencryptedDirectory.containedFiles.size(); counter++){
+		for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.encryptedDirectory.containedFiles.get(counter)));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.encryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
 		copy(is,os);

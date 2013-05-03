@@ -10,11 +10,17 @@ import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
+
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Decryptor {
 
@@ -22,10 +28,13 @@ public class Decryptor {
 	 * Take a user and encrypts everything in the unecrpyted directory to
 	 * the encrypted directory and
 	 * looks for preexisting initialisation
+	 * @throws NoSuchProviderException 
 	 * */
 	
-	//TODO: avoid trying to encrypt directories
-	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
+	public Decryptor(){
+		Security.addProvider(new BouncyCastleProvider());
+	}
+	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException, InvalidCipherTextException, CryptoException{
 		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		Cipher cipher = generateCipher();
 		FileInputStream in = new FileInputStream(ivread);
@@ -52,8 +61,9 @@ public class Decryptor {
 	/** Method used to decrypt the string file with the iv and accepted password key
 	 * 
 	 * @param user the user that contains the necessary directory objects
+	 * @throws NoSuchProviderException 
 	 */
-	public void decryptChkFile(User user) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException, InvalidAlgorithmParameterException{
+	public void decryptChkFile(User user) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException, InvalidCipherTextException{
 		File chkFile = user.referenceFile;
 		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		Cipher cipher = generateCipher();
@@ -81,8 +91,8 @@ public class Decryptor {
 		}
 	}
 	
-	Cipher generateCipher() throws NoSuchAlgorithmException, NoSuchPaddingException{
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+	Cipher generateCipher() throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException{
+		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
 		return cipher;
 	}
 	

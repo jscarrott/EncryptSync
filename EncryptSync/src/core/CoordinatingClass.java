@@ -11,12 +11,17 @@ import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.GCMParameterSpec;
+
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 
 public class CoordinatingClass {
 
@@ -61,8 +66,9 @@ public class CoordinatingClass {
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidAlgorithmParameterException
 	 * @throws IOException
+	 * @throws NoSuchProviderException 
 	 */
-	public User addNewUser(String name, String in, String out, String passwordInput) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
+	public User addNewUser(String name, String in, String out, String passwordInput) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException{
 		User newUser = new User(name, in , out);
 		for(User user : users){
 			if(user.name.equals(newUser.name)){
@@ -72,7 +78,12 @@ public class CoordinatingClass {
 			
 		}
 		if(newUser.referenceFile.exists()){
-			verifyKey(newUser, passwordInput); //Should this be implemented in the UI? Hmm easy enough to remove later.
+			try {
+				verifyKey(newUser, passwordInput);
+			} catch (InvalidCipherTextException e) {
+			  System.out.println("Refrence File has been corrupted or modified");
+				e.printStackTrace();
+			} //Should this be implemented in the UI? Hmm easy enough to remove later.
 		if(newUser.keyVerified){
 			System.out.println("Succesfull login, password correct");
 		}
@@ -84,7 +95,12 @@ public class CoordinatingClass {
 		else {
 			
 			createKey(newUser, passwordInput);
-			verifyKey(newUser, passwordInput);
+			try {
+				verifyKey(newUser, passwordInput);
+			} catch (InvalidCipherTextException e) {
+				System.out.println("Refrence File has been corrupted or modified");
+				e.printStackTrace();
+			}
 			
 		}
 		users.add(newUser);
@@ -192,8 +208,9 @@ public class CoordinatingClass {
 	 * @throws InvalidKeyException
 	 * @throws InvalidAlgorithmParameterException
 	 * @throws NoSuchPaddingException
+	 * @throws NoSuchProviderException 
 	 */
-	public void createKey(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException{
+	public void createKey(User user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException{
 		user.generatePasswordKey(password);
 		encryptor.encryptChkFile(user, "abcdefghijklmnopqrstuvwxyz123");
 	}
@@ -209,12 +226,18 @@ public class CoordinatingClass {
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidAlgorithmParameterException
 	 * @throws IOException
+	 * @throws NoSuchProviderException 
 	 */
-	public boolean loginUser(String userName, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
+	public boolean loginUser(String userName, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException{
 	for(User user : users){
 		if(user.name.equals(userName)){
-			if(verifyKey(user, passwordString)) return true;
-			else System.out.println("Password Incorrect! Please try again.");
+			try {
+				if(verifyKey(user, passwordString)) return true;
+				else System.out.println("Password Incorrect! Please try again.");
+			} catch (InvalidCipherTextException e) {
+				System.out.println("Refrence File has been corrupted or modified");
+				e.printStackTrace();
+			}
 		}
 	}
 	System.out.println("No such User. Please try again.");
@@ -231,10 +254,16 @@ public class CoordinatingClass {
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidAlgorithmParameterException
 	 * @throws IOException
+	 * @throws NoSuchProviderException 
 	 */
-	public boolean loginUser(User user, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException{
-				if(verifyKey(user, passwordString)) return true;
-				else System.out.println("Password Incorrect! Please try again.");
+	public boolean loginUser(User user, String passwordString) throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException{
+				try {
+					if(verifyKey(user, passwordString)) return true;
+					else System.out.println("Password Incorrect! Please try again.");
+				} catch (InvalidCipherTextException e) {
+					System.out.println("Refrence File has been corrupted or modified");
+					e.printStackTrace();
+				}
 	    return false;
 		}
 
@@ -257,9 +286,11 @@ public class CoordinatingClass {
 	 * @throws InvalidKeyException
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidAlgorithmParameterException
+	 * @throws NoSuchProviderException 
+	 * @throws InvalidCipherTextException 
 	 */
 	
-	public boolean verifyKey(User user, String passwordInput) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException{
+	public boolean verifyKey(User user, String passwordInput) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchProviderException, InvalidCipherTextException{
 		user.generatePasswordKey(passwordInput);
 		decryptor.decryptChkFile(user);
 		File chkFile  = new File("tempfile.txt");
@@ -275,12 +306,20 @@ public class CoordinatingClass {
 		
 	}
 	
-	public void encryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
+	public void encryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException{
 		getEncryptor().encryptFile(userProfile);
 	}
 	
-	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException{
-		getDecryptor().decryptFile(userProfile);
+	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException{
+		try {
+			getDecryptor().decryptFile(userProfile);
+		} catch (InvalidCipherTextException e) {
+			System.out.println("Encrypted file has been corrupted or modified");
+			e.printStackTrace();
+		} catch (CryptoException e) {
+			System.out.println("Encrypted file has been corrupted or modified");
+			e.printStackTrace();
+		}
 	}
 	
 	/** runs the directory method pollDirectory()

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.NoSuchPaddingException;
@@ -56,9 +57,10 @@ public class CoordTest {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws NoSuchProviderException 
 	 */
 	@Test
-	public void testAddNewUserStringStringStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+	public void testAddNewUserStringStringStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException {
 		CoordinatingClass testCoordClass = new CoordinatingClass();
 		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut", "bob1234");
 	assertEquals( "BobHarold", testCoordClass.getUsers().get(0).getName());
@@ -133,9 +135,10 @@ public class CoordTest {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws NoSuchProviderException 
 	 */
 	@Test
-	public void testLoginUserStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+	public void testLoginUserStringString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException {
 		CoordinatingClass testCoordClass = new CoordinatingClass();
 		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.loginUser("Bob Harold", "bob1234");
@@ -151,9 +154,10 @@ public class CoordTest {
 	 * @throws InvalidKeySpecException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws NoSuchProviderException 
 	 */
 	@Test
-	public void testLoginUserUserString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException {
+	public void testLoginUserUserString() throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, IOException, NoSuchProviderException {
 		CoordinatingClass testCoordClass = new CoordinatingClass();
 		testCoordClass.addNewUser("Bob Harold", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testCoordClass.createKey(testCoordClass.getUsers().get(4), "bob1234");

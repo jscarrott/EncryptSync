@@ -1,6 +1,7 @@
 package core;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,8 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -36,20 +40,34 @@ public class Decryptor {
 	}
 	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException, InvalidCipherTextException, CryptoException{
 		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
-		Cipher cipher = generateCipher();
+		
 		FileInputStream in = new FileInputStream(ivread);
 		byte[] iv = new byte[(int) ivread.length()];
 		in.read(iv);
 		in.close();
-		cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
+	
 		if(!(user.encryptedDirectory.containedFiles.size() == 0)){
 			for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
 				if(!user.encryptedDirectory.containedFiles
 						.get(counter).isDirectory()){
+					Cipher cipher = generateCipher();
+					cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
 					BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.encryptedDirectory.containedFiles.get(counter)));
 					CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.encryptedDirectory.containedFiles.get(counter).getName() + ""), cipher);
-					copy(is,os);
-					is.close();
+					try {
+						copy(is,os);
+					} catch (RuntimeException e){
+						System.out.println("eeee!");
+					}
+					try{
+						cipher.doFinal();
+						is.close();
+					}
+					catch (RuntimeException e){
+						System.out.println("eeee!");
+					} catch (Exception e) {
+						System.out.println("eeee!");
+					}
 					os.close();
 				}
 			
@@ -74,22 +92,27 @@ public class Decryptor {
 		cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
 		boolean exists = ivread.exists();
 		if (!exists){
-			System.out.println("Cypher config file not found!");
+			System.out.println("Cipher config file not found!");
 		}
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(chkFile + ".out"));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(new File("tempfile.txt")), cipher);
-		copy(is,os);
+		try {
+			copy(is,os);
+		} catch (Exception e){
+			System.out.println("eeee!");
+		}
 		is.close();
 		os.close();
 	}
 	
-	private static void copy(InputStream is, OutputStream os) throws IOException {
-		int i;
-		byte[] b = new byte[1024];
-		while((i=is.read(b))!=-1) {
-			os.write(b, 0, i);
+	 private static void copy(InputStream is, OutputStream os) throws IOException {
+		    int i;
+		    byte[] b = new byte[1024];
+		    while((i=is.read(b))!=-1) {
+		        os.write(b, 0, i);
+		    }
+
 		}
-	}
 	
 	Cipher generateCipher() throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException{
 		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");

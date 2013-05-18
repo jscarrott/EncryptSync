@@ -1,6 +1,7 @@
 package core;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,8 +18,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -68,8 +71,7 @@ public class Encryptor {
 								user.encryptedDirectory.location.toAbsolutePath()
 										+ "\\"
 										+ user.unencryptedDirectory.containedFiles
-												.get(counter).getName() + ""),
-						cipher);
+												.get(counter).getName() + ""), cipher);
 				copy(is, os);
 				is.close();
 				os.close();
@@ -121,7 +123,7 @@ public class Encryptor {
 		ow.write(inputFile);
 		ow.close();
 		
-		
+		int i = cipher.getBlockSize();
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.referenceFile));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.referenceFile+".out"), cipher);
 		copy(is, os);
@@ -136,14 +138,15 @@ public class Encryptor {
  * @param os output stream
  * @throws IOException
  */
-	private static void copy(InputStream is, OutputStream os)
-			throws IOException {
-		int i;
-		byte[] b = new byte[1024];
-		while ((i = is.read(b)) != -1) {
-			os.write(b, 0, i);
+	 private static void copy(InputStream is, OutputStream os) throws IOException {
+		    int i;
+		    byte[] b = new byte[1024];
+		    while((i=is.read(b))!=-1) {
+		        os.write(b, 0, i);
+		    }
+
 		}
-	}
+	
 /** generates the cipher for this encryptor
  * 
  * @return

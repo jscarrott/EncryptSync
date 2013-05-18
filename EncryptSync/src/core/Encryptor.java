@@ -1,6 +1,7 @@
 package core;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,23 +15,31 @@ import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Encryptor {
 	/**
 	 * Take a user and encrypts everything in the unecrpyted directory to
 	 * the encrypted directory and
 	 * looks for preexisting initialisation vector else creates one 
-	 * @param user 	the user that contains the necessary directory objects */
+	 * @param user 	the user that contains the necessary directory objects 
+	 * @throws NoSuchProviderException */
 	
-	//TODO: avoid trying to encrypt directories
+	public Encryptor(){
+		Security.addProvider(new BouncyCastleProvider());
+	}
 	public void encryptFile(User user) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-			NoSuchPaddingException, IOException {
+			NoSuchPaddingException, IOException, NoSuchProviderException {
 		
 		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
@@ -62,8 +71,7 @@ public class Encryptor {
 								user.encryptedDirectory.location.toAbsolutePath()
 										+ "\\"
 										+ user.unencryptedDirectory.containedFiles
-												.get(counter).getName() + ""),
-						cipher);
+												.get(counter).getName() + ""), cipher);
 				copy(is, os);
 				is.close();
 				os.close();
@@ -81,11 +89,12 @@ public class Encryptor {
  * @throws InvalidKeyException
  * @throws InvalidAlgorithmParameterException
  * @throws IOException
+ * @throws NoSuchProviderException 
  */
 	public void encryptChkFile(User user, String inputFile)
 			throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, InvalidAlgorithmParameterException,
-			IOException {// same as above but for singular file, for creating
+			IOException, NoSuchProviderException {// same as above but for singular file, for creating
 							// consistant files to check against
 		File ivread = new File(user.name + ".iv");
 		boolean exists = ivread.exists();
@@ -114,7 +123,7 @@ public class Encryptor {
 		ow.write(inputFile);
 		ow.close();
 		
-		
+		int i = cipher.getBlockSize();
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.referenceFile));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.referenceFile+".out"), cipher);
 		copy(is, os);
@@ -129,23 +138,25 @@ public class Encryptor {
  * @param os output stream
  * @throws IOException
  */
-	private static void copy(InputStream is, OutputStream os)
-			throws IOException {
-		int i;
-		byte[] b = new byte[1024];
-		while ((i = is.read(b)) != -1) {
-			os.write(b, 0, i);
+	 private static void copy(InputStream is, OutputStream os) throws IOException {
+		    int i;
+		    byte[] b = new byte[1024];
+		    while((i=is.read(b))!=-1) {
+		        os.write(b, 0, i);
+		    }
+
 		}
-	}
+	
 /** generates the cipher for this encryptor
  * 
  * @return
  * @throws NoSuchAlgorithmException
  * @throws NoSuchPaddingException
+ * @throws NoSuchProviderException 
  */
-	Cipher generateCipher() throws NoSuchAlgorithmException,
-			NoSuchPaddingException {
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+	public Cipher generateCipher() throws NoSuchAlgorithmException,
+			NoSuchPaddingException, NoSuchProviderException {
+		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
 		return cipher;
 	}
 

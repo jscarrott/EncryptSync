@@ -41,10 +41,10 @@ public class Encryptor {
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, IOException, NoSuchProviderException {
 		
-		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
+		//File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
 		Cipher cipher = generateCipher();
-		if (ivread.exists()) {
+		/*if (ivread.exists()) {
 			FileInputStream in = new FileInputStream(ivread);
 			byte[] iv = new byte[(int) ivread.length()];
 			in.read(iv);
@@ -57,21 +57,20 @@ public class Encryptor {
 			FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.name + ".iv");
 			ivout.write(iv);
 			ivout.close();
-		}
+		}*/
 		for (int counter = 0; counter < user.unencryptedDirectory.containedFiles
 				.size(); counter++) {// Iterates through directory and ignores a file if it is a directory
-			if(!user.unencryptedDirectory.containedFiles
-									.get(counter).isDirectory()){
+			if(!user.unencryptedDirectory.containedFiles.get(counter).isDirectory()){
+				cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
+				byte[] iv = cipher.getIV();
+				FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + "file"+ user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + ".iv");
+				System.out.println(user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName());
+				ivout.write(iv);
+				ivout.close();
 				BufferedInputStream is = new BufferedInputStream(
-						new FileInputStream(
-								user.unencryptedDirectory.containedFiles
-										.get(counter)));
-				CipherOutputStream os = new CipherOutputStream(
-						new FileOutputStream(
-								user.encryptedDirectory.location.toAbsolutePath()
-										+ "\\"
-										+ user.unencryptedDirectory.containedFiles
-												.get(counter).getName() + ""), cipher);
+						new FileInputStream(	user.unencryptedDirectory.containedFiles.get(counter)));
+				CipherOutputStream os = new CipherOutputStream(	new FileOutputStream(	user.encryptedDirectory.location.toAbsolutePath()	+ "\\"
+										+ user.unencryptedDirectory.containedFiles	.get(counter).getName() + ""), cipher);
 				copy(is, os);
 				is.close();
 				os.close();

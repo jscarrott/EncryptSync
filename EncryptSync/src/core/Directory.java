@@ -1,6 +1,7 @@
 package core;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -24,11 +25,7 @@ public class Directory {
 	 */
 	public Directory(String path){
 		FileSystem fs = FileSystems.getDefault();
-		try {
-			location = fs.getPath(path);//Uses the string input to generate a correct path using the filesystem class
-		} catch (Exception e) {
-			System.out.println("Invalid path entered, user should not be created");
-		}
+		location = fs.getPath(path);//Uses the string input to generate a correct path using the filesystem class
 		
 		pollDirectory(); //generates the initial list of files in the directory.
 		

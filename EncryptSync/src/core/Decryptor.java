@@ -3,6 +3,7 @@ package core;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -34,7 +37,7 @@ public class Decryptor {
 	public Decryptor(){
 		Security.addProvider(new BouncyCastleProvider());
 	}
-	public void decryptFile(User user) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException, InvalidCipherTextException, CryptoException{
+	public void decryptFile(User user) throws BadPaddingException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException{
 		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
 		FileInputStream in = new FileInputStream(ivread);
@@ -61,8 +64,9 @@ public class Decryptor {
 					}
 					catch (RuntimeException e){
 						System.out.println("eeee!");
-					} catch (Exception e) {
+					} catch (BadPaddingException e) {
 						System.out.println("eeee!");
+						throw e;
 					}
 					os.close();
 				}
@@ -96,6 +100,7 @@ public class Decryptor {
 			copy(is,os);
 		} catch (Exception e){
 			System.out.println("eeee!");
+			System.err.println(e.getMessage());
 		}
 		is.close();
 		os.close();

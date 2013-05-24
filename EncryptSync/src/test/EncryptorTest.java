@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.bouncycastle.crypto.CryptoException;
@@ -27,18 +29,13 @@ public class EncryptorTest {
 	}
 
 	@Test
-	public void testEncryptFile() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException {
+	public void testEncryptFile() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException {
 		Encryptor testE = new Encryptor();
 		Decryptor testD = new Decryptor();
 		User testUser = new User("John", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testUser.generatePasswordKey("test123");
 		testE.encryptFile(testUser);
-		try {
-			testD.decryptFile(testUser);
-		} catch (CryptoException e) {
-			System.out.println("Refrence File has been corrupted or modified");
-			e.printStackTrace();
-		}
+		testD.decryptFile(testUser);
 	}
 
 	@Test

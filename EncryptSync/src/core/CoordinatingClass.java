@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 
@@ -310,16 +313,10 @@ public class CoordinatingClass {
 		getEncryptor().encryptFile(userProfile);
 	}
 	
-	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException{
-		try {
+	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException{
+		
 			getDecryptor().decryptFile(userProfile);
-		} catch (InvalidCipherTextException e) {
-			System.out.println("Encrypted file has been corrupted or modified");
-			e.printStackTrace();
-		} catch (CryptoException e) {
-			System.out.println("Encrypted file has been corrupted or modified");
-			e.printStackTrace();
-		}
+		
 	}
 	
 	/** runs the directory method pollDirectory()

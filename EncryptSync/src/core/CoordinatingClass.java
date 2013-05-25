@@ -180,8 +180,13 @@ public class CoordinatingClass {
 		XMLUserList  readInXMLUserList = (XMLUserList) um.unmarshal(new FileReader(Config_XML));
 		for(XMLUser  xmlUser : readInXMLUserList.getUserList()){
 			addNewUser(xmlUser.name, xmlUser.unencryptedDirectory, xmlUser.encryptedDirectory);
+			for( User user : users){
+				if(user.getName().equals(xmlUser.getName())){
+					user.setMostRecentEncryptedFileNames(xmlUser.getFileNameList().getFileNames());
+				}
+			}
 		}
-		readInXMLUserList.getUserList().get(0);
+		
 	}
 	/** Saves the users to file in a CSV format
 	 * 
@@ -213,6 +218,17 @@ public class CoordinatingClass {
 			buffUser.setUnencryptedDirectory(user.getUnencryptedDirectory().getLocation().toString());
 			buffUser.setEncryptedDirectory(user.getEncryptedDirectory().getLocation().toString());
 			buffUser.setName(user.getName());
+			ArrayList<String> buffNameList = new ArrayList<String>();
+			user.getEncryptedDirectory().pollDirectory();
+			for(File file : user.getEncryptedDirectory().getContainedFiles()){
+				if(!file.isDirectory()){
+					buffNameList.add(file.getName());
+				}
+				
+			}
+			FileNameList NameList = new FileNameList();
+			NameList.setFileNames(buffNameList);
+			buffUser.setFileNameList(NameList);
 			userArray.add(buffUser);
 		}
 		userList.setUserList(userArray);

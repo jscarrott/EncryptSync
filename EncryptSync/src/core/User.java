@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -44,6 +45,7 @@ public class User {
 	 boolean keyVerified;//
 	File referenceFile;// file location for the test file used to verify the key
 	File configDirectory;
+	ArrayList<String> mostRecentEncryptedFileNames;
 
 	public File getConfigDirectory() {
 		return configDirectory;
@@ -174,6 +176,14 @@ public class User {
 
 	public void setKeyVerified(boolean keyVerified) {
 		this.keyVerified = keyVerified;
+	}
+
+	public ArrayList<String> getMostRecentEncryptedFileNames() {
+		return mostRecentEncryptedFileNames;
+	}
+
+	public void setMostRecentEncryptedFileNames(ArrayList<String> mostRecentEncryptedFileNames) {
+		this.mostRecentEncryptedFileNames = mostRecentEncryptedFileNames;
 	}
 
 	public String toString() {

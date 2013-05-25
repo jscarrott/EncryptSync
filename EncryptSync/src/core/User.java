@@ -14,6 +14,7 @@ import javax.crypto.interfaces.PBEKey;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+
 public class User {
 	/**
 	 * The user class stores information required for a specific syncing of a
@@ -36,10 +37,11 @@ public class User {
 	 * @param salt
 	 *            Stores the seasoning for the PBE algorithm.
 	 */
+
 	SecretKey passwordKey;
 	String name; // name of the user to be used in the future for possible
 					// multiple accounts
-	boolean keyVerified;//
+	 boolean keyVerified;//
 	File referenceFile;// file location for the test file used to verify the key
 	File configDirectory;
 
@@ -51,6 +53,7 @@ public class User {
 		this.configDirectory = configDirectory;
 	}
 
+	
 	public String getName() {
 		return name;
 	}

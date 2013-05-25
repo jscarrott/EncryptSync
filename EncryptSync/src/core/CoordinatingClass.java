@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +23,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -41,9 +46,10 @@ public class CoordinatingClass {
 	 * @throws InvalidKeySpecException again hardcoded
 	 * @throws NoSuchPaddingException ditto
 	 * @throws InvalidAlgorithmParameterException
+	 * @throws JAXBException 
 	 */
-	public CoordinatingClass() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException {
-		userListFile = new File("users.conf");//option to change this via the UI
+	public CoordinatingClass() throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, JAXBException {
+		userListFile = new File("users.xml");//option to change this via the UI
 		users = new ArrayList<User>();
 		encryptor = new Encryptor();
 		decryptor = new Decryptor();
@@ -148,9 +154,10 @@ public class CoordinatingClass {
 	 * @throws InvalidKeySpecException
 	 * @throws NoSuchPaddingException
 	 * @throws InvalidAlgorithmParameterException
+	 * @throws JAXBException 
 	 */
-	private void readInUserList(File usersFileLocation) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException{
-		File usersFile  = usersFileLocation;//use correct directory
+	private void readInUserList(File usersFileLocation) throws IOException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidAlgorithmParameterException, JAXBException{
+		/*File usersFile  = usersFileLocation;//use correct directory
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(usersFile));
 		Scanner inputUsers = new Scanner(is);
 		inputUsers.useDelimiter(",");
@@ -165,13 +172,24 @@ public class CoordinatingClass {
 		}
 		is.close();
 		inputUsers.close();
+		*/
+		
+		String Config_XML = userListFile.toString();
+		JAXBContext context = JAXBContext.newInstance(XMLUserList.class);
+		Unmarshaller um = context.createUnmarshaller();
+		XMLUserList  readInXMLUserList = (XMLUserList) um.unmarshal(new FileReader(Config_XML));
+		for(XMLUser  xmlUser : readInXMLUserList.getUserList()){
+			addNewUser(xmlUser.name, xmlUser.unencryptedDirectory, xmlUser.encryptedDirectory);
+		}
+		readInXMLUserList.getUserList().get(0);
 	}
 	/** Saves the users to file in a CSV format
 	 * 
 	 * @throws IOException
+	 * @throws JAXBException 
 	 */
-	public void saveUserListToFile() throws IOException{
-		final Charset ENCODING = StandardCharsets.UTF_8;
+	public void saveUserListToFile() throws IOException, JAXBException{
+		/*final Charset ENCODING = StandardCharsets.UTF_8;
 		File usersFile  = userListFile;
 		BufferedWriter ow = Files.newBufferedWriter(usersFile.toPath(), ENCODING);
 		boolean first = true;
@@ -182,7 +200,34 @@ public class CoordinatingClass {
 			ow.write(user.getUnencryptedDirectory().getLocation().toString() + ",");
 			ow.write(user.getEncryptedDirectory().getLocation().toString() + "," );
 		}
-		ow.close();
+		ow.close();*/
+		
+		String Config_XML = userListFile.toString();
+		
+		XMLUserList userList = new XMLUserList();
+		ArrayList<XMLUser> userArray = new ArrayList<XMLUser>();
+		//XMLUser buffUser = new XMLUser();
+		for(User user : users){
+			XMLUser buffUser = new XMLUser();
+			buffUser.setConfigDirectory(user.getConfigDirectory().toString());
+			buffUser.setUnencryptedDirectory(user.getUnencryptedDirectory().getLocation().toString());
+			buffUser.setEncryptedDirectory(user.getEncryptedDirectory().getLocation().toString());
+			buffUser.setName(user.getName());
+			userArray.add(buffUser);
+		}
+		userList.setUserList(userArray);
+		
+		 // create JAXB context and instantiate marshaller
+	    JAXBContext context = JAXBContext.newInstance(XMLUserList.class);
+	    Marshaller m = context.createMarshaller();
+	    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	    
+	 // Write to System.out
+	    m.marshal(userList, System.out);
+	    
+	    // Write to File
+	    m.marshal(userList, new File(Config_XML));
+	    
 	}
 	
 	/** removes user from users collection. -  

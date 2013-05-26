@@ -37,7 +37,7 @@ public class Decryptor {
 	public Decryptor(){
 		Security.addProvider(new BouncyCastleProvider());
 	}
-	public void decryptFile(User user) throws BadPaddingException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException{
+	public void decryptFilesWithIVPresent(User user) throws BadPaddingException, IOException, NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException{
 		/*File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
 		FileInputStream in = new FileInputStream(ivread);
@@ -49,7 +49,7 @@ public class Decryptor {
 			for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
 				if(!user.encryptedDirectory.containedFiles
 						.get(counter).isDirectory()){
-					File ivread = new File(user.configDirectory + "\\" + "file"+ user.encryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + ".iv");
+					File ivread = new File(user.configDirectory + "\\" + user.encryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + "_iv");
 					System.out.println(user.encryptedDirectory.containedFiles.get(counter).toPath().getFileName());
 					FileInputStream in = new FileInputStream(ivread);
 					byte[] iv = new byte[(int) ivread.length()];
@@ -89,7 +89,7 @@ public class Decryptor {
 	 */
 	public void decryptChkFile(User user) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchProviderException, InvalidCipherTextException{
 		File chkFile = user.referenceFile;
-		File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
+		File ivread = new File(user.configDirectory + "\\" + user.name + "_iv");
 		Cipher cipher = generateCipher();
 		FileInputStream in = new FileInputStream(ivread);
 		byte[] iv = new byte[(int) ivread.length()];

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -145,7 +146,7 @@ public class CoordinatingClass {
 		users.add(newUser);
 		return newUser;
 	}
-	/** Reads in the text file that contains a CSV list of all known users
+	/** Reads in the text file that contains a XML list of all known users
 	 * 
 	 * @param usersFileLocation Where the config file is stored
 	 * @throws IOException
@@ -182,13 +183,13 @@ public class CoordinatingClass {
 			addNewUser(xmlUser.name, xmlUser.unencryptedDirectory, xmlUser.encryptedDirectory);
 			for( User user : users){
 				if(user.getName().equals(xmlUser.getName())){
-					user.setMostRecentEncryptedFileNames(xmlUser.getFileNameList().getFileNames());
+					user.setMostRecentEncryptedFileNames(getLastKnownEncryptedFiles(user));
 				}
 			}
 		}
 		
 	}
-	/** Saves the users to file in a CSV format
+	/** Saves the users to file in a XML format
 	 * 
 	 * @throws IOException
 	 * @throws JAXBException 
@@ -218,16 +219,11 @@ public class CoordinatingClass {
 			buffUser.setUnencryptedDirectory(user.getUnencryptedDirectory().getLocation().toString());
 			buffUser.setEncryptedDirectory(user.getEncryptedDirectory().getLocation().toString());
 			buffUser.setName(user.getName());
-			ArrayList<String> buffNameList = new ArrayList<String>();
 			user.getEncryptedDirectory().pollDirectory();
-			for(File file : user.getEncryptedDirectory().getContainedFiles()){
-				if(!file.isDirectory()){
-					buffNameList.add(file.getName());
-				}
-				
-			}
+			
 			FileNameList NameList = new FileNameList();
-			NameList.setFileNames(buffNameList);
+			user.setMostRecentEncryptedFileNames(updateKnownEncryptedFileList(user));
+			NameList.setFileNames(user.getMostRecentEncryptedFileNames());
 			buffUser.setFileNameList(NameList);
 			userArray.add(buffUser);
 		}
@@ -370,13 +366,48 @@ public class CoordinatingClass {
 		
 	}
 	
+	
+	public ArrayList<String> getLastKnownEncryptedFiles(User user) throws JAXBException, FileNotFoundException{
+		String Config_XML = userListFile.toString();
+		JAXBContext context = JAXBContext.newInstance(XMLUserList.class);
+		Unmarshaller um = context.createUnmarshaller();
+		XMLUserList  readInXMLUserList = (XMLUserList) um.unmarshal(new FileReader(Config_XML));
+		for(XMLUser  xmlUser : readInXMLUserList.getUserList()){
+			if(user.getName().equals(xmlUser.getName()) ){
+				if(xmlUser.getFileNameList() != null){
+					return xmlUser.getFileNameList().getFileNames();
+				}
+				
+			}
+		  
+		}
+		return new ArrayList<>();
+	}
+	
+	public ArrayList<String> updateKnownEncryptedFileList(User user){
+		ArrayList<String> knownEncryptedFileList = new ArrayList<>();
+		for(File file : user.getEncryptedDirectory().getContainedFiles()){
+			if(!file.isDirectory()){//TODO itereate throught 
+				File buffFile = new File(user.getConfigDirectory() + "\\" + file.getName() +  user.name + "_iv" );
+				if(buffFile.getAbsoluteFile().exists()){
+					knownEncryptedFileList.add(file.getName());
+				}
+				
+				
+				
+				
+			}
+		}
+		return knownEncryptedFileList;
+	}
+	
 	public void encryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException{
 		getEncryptor().encryptFile(userProfile);
 	}
 	
 	public void decryptFiles(User userProfile) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException{
 		
-			getDecryptor().decryptFile(userProfile);
+			getDecryptor().decryptFilesWithIVPresent(userProfile);
 		
 	}
 	

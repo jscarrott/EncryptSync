@@ -35,7 +35,7 @@ public class EncryptorTest {
 		User testUser = new User("John", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testIn", "C:\\Users\\Home\\git\\EncryptSync\\EncryptSync\\testOut");
 		testUser.generatePasswordKey("test123");
 		testE.encryptFile(testUser);
-		testD.decryptFile(testUser);
+		testD.decryptFilesWithIVPresent(testUser);
 	}
 
 	@Test

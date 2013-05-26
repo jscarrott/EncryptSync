@@ -63,7 +63,7 @@ public class Encryptor {
 			if(!user.unencryptedDirectory.containedFiles.get(counter).isDirectory()){
 				cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
 				byte[] iv = cipher.getIV();
-				FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + "file"+ user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + ".iv");
+				FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + "_iv");
 				System.out.println(user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName());
 				ivout.write(iv);
 				ivout.close();
@@ -95,7 +95,7 @@ public class Encryptor {
 			InvalidKeyException, InvalidAlgorithmParameterException,
 			IOException, NoSuchProviderException {// same as above but for singular file, for creating
 							// consistant files to check against
-		File ivread = new File(user.name + ".iv");
+		File ivread = new File(user.name + "_iv");
 		boolean exists = ivread.exists();
 		Cipher cipher = generateCipher();
 		if (exists) {
@@ -108,7 +108,7 @@ public class Encryptor {
 		} else {
 			cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
 			byte[] iv = cipher.getIV();
-			FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.name + ".iv");
+			FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.name + "_iv");
 			ivout.write(iv);
 			ivout.close();
 		}

@@ -43,7 +43,7 @@ public class Encryptor {
 		
 		//File ivread = new File(user.configDirectory + "\\" + user.name + ".iv");
 		
-		Cipher cipher = generateCipher();
+		
 		/*if (ivread.exists()) {
 			FileInputStream in = new FileInputStream(ivread);
 			byte[] iv = new byte[(int) ivread.length()];
@@ -61,6 +61,7 @@ public class Encryptor {
 		for (int counter = 0; counter < user.unencryptedDirectory.containedFiles
 				.size(); counter++) {// Iterates through directory and ignores a file if it is a directory
 			if(!user.unencryptedDirectory.containedFiles.get(counter).isDirectory()){
+				Cipher cipher = generateCipher();
 				cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
 				byte[] iv = cipher.getIV();
 				FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + user.unencryptedDirectory.containedFiles.get(counter).toPath().getFileName() +  user.name + "_iv");
@@ -71,9 +72,9 @@ public class Encryptor {
 						new FileInputStream(	user.unencryptedDirectory.containedFiles.get(counter)));
 				CipherOutputStream os = new CipherOutputStream(	new FileOutputStream(	user.encryptedDirectory.location.toAbsolutePath()	+ "\\"
 										+ user.unencryptedDirectory.containedFiles	.get(counter).getName() + ""), cipher);
-				copy(is, os);
-				is.close();
-				os.close();
+				new ThreadCopy(is, os).start();
+				//is.close();
+				//os.close();
 									}
 			
 		}
@@ -122,12 +123,11 @@ public class Encryptor {
 		ow.write(inputFile);
 		ow.close();
 		
-		int i = cipher.getBlockSize();
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(user.referenceFile));
 		CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.referenceFile+".out"), cipher);
-		copy(is, os);
-		is.close();
-		os.close();
+		new ThreadCopy(is, os).start();
+		//is.close();
+		//os.close();
 
 		// TODO insert code to create then encrypt a simple phrase e.g. 1234567
 	}

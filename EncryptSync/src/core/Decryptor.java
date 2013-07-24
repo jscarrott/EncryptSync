@@ -12,6 +12,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -44,10 +46,11 @@ public class Decryptor {
 		in.close();*/
 
 		if(!(user.encryptedDirectory.containedFiles.size() == 0)){
+			ExecutorService exService = Executors.newCachedThreadPool();
 			for(int counter = 0; counter < user.encryptedDirectory.containedFiles.size(); counter++){
 				if(!user.encryptedDirectory.containedFiles
 						.get(counter).isDirectory()){
-					File ivread = new File(user.configDirectory + "\\" + user.getMostRecentEncryptedFileNames().get(counter) +  user.name + "_iv");
+					File ivread = new File(user.configDirectory + "\\" + user.getMostRecentEncryptedFileNames().get(counter-1) +  user.name + "_iv");
 					System.out.println(user.encryptedDirectory.containedFiles.get(counter).toPath().getFileName());
 					FileInputStream in = new FileInputStream(ivread);
 					byte[] iv = new byte[(int) ivread.length()];
@@ -55,10 +58,11 @@ public class Decryptor {
 					in.close();
 					Cipher cipher = generateCipher();
 					cipher.init(Cipher.DECRYPT_MODE, user.passwordKey, new IvParameterSpec(iv));
-					BufferedInputStream is = new BufferedInputStream(new FileInputStream(new File(user.encryptedDirectory.getLocation().toString() + "\\" + user.getMostRecentEncryptedFileNames().get(counter))));
-					CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.getMostRecentEncryptedFileNames().get(counter)), cipher);
+					BufferedInputStream is = new BufferedInputStream(new FileInputStream(new File(user.encryptedDirectory.getLocation().toString() + "\\" + user.getMostRecentEncryptedFileNames().get(counter-1))));
+					CipherOutputStream os = new CipherOutputStream(new FileOutputStream(user.unencryptedDirectory.location.toAbsolutePath() +  "\\"+ user.getMostRecentEncryptedFileNames().get(counter-1)), cipher);
 					try {
 						copy(is,os);
+//						exService.execute(new ThreadCopy(is,os));
 					} catch (RuntimeException e){
 						System.out.println("eeee!");
 					}

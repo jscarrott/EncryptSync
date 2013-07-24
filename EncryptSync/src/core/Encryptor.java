@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -55,6 +59,8 @@ public class Encryptor {
 			ivout.write(iv);
 			ivout.close();
 		}*/
+		ExecutorService exService = Executors.newCachedThreadPool();
+
 		for (int counter = 0; counter < user.unencryptedDirectory.containedFiles
 				.size(); counter++) {// Iterates through directory and ignores a file if it is a directory
 			if(!user.unencryptedDirectory.containedFiles.get(counter).isDirectory()){
@@ -69,12 +75,14 @@ public class Encryptor {
 						new FileInputStream(	user.unencryptedDirectory.containedFiles.get(counter)));
 				CipherOutputStream os = new CipherOutputStream(	new FileOutputStream(	user.encryptedDirectory.location.toAbsolutePath()	+ "\\"
 										+ user.unencryptedDirectory.containedFiles	.get(counter).getName() + ""), cipher);
-				new ThreadCopy(is, os).start();
+				exService.execute(new ThreadCopy(is, os));
 				//is.close();
 				//os.close();
 									}
 			
 		}
+		exService.shutdown();
+		System.out.println("finished!");
 
 	}
 /** Method used to encrypt the string file with the iv and accepted password key
@@ -127,6 +135,22 @@ public class Encryptor {
 		//os.close();
 
 		// TODO insert code to create then encrypt a simple phrase e.g. 1234567
+	}
+	
+	public void encryptSingleFile(User user, String inputFile) throws NoSuchAlgorithmException, NoSuchPaddingException, NoSuchProviderException, IOException, InvalidKeyException, InvalidAlgorithmParameterException{
+		ExecutorService exService = Executors.newCachedThreadPool();
+		Cipher cipher = generateCipher();
+		cipher.init(Cipher.ENCRYPT_MODE, user.passwordKey);
+		byte[] iv = cipher.getIV();
+		FileOutputStream ivout = new FileOutputStream(user.configDirectory + "\\" + inputFile+  user.name + "_iv");
+		ivout.write(iv);
+		ivout.close();
+		BufferedInputStream is = new BufferedInputStream(
+				new FileInputStream(	user.unencryptedDirectory.getLocation().toAbsolutePath() + "\\" +  inputFile));
+		CipherOutputStream os = new CipherOutputStream(	new FileOutputStream(	user.encryptedDirectory.location.toAbsolutePath()	+ "\\"
+								+ inputFile + ""), cipher);
+		exService.execute(new ThreadCopy(is, os));
+		
 	}
 /** copies input stream to output stream bitwise
  * 
